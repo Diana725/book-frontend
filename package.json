@@ -25,8 +25,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "preinstall": "npm install --quiet --legacy-peer-deps",
-    "build": "react-scripts build",
+    "build": "npm install --quiet --legacy-peer-deps && npm run ionic:build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
