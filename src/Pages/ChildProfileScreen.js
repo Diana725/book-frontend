@@ -4,11 +4,13 @@ import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { BsHouse, BsPersonFill, BsPersonFillGear } from "react-icons/bs";
 import LogoutButton from "../components/LogoutButton";
+import DeleteAccountModal from "../components/DeleteAccountModal";
 
 const ChildProfileScreen = () => {
   const navigate = useNavigate();
   const [childName, setChildName] = useState("");
   const [gender, setGender] = useState("");
+  const [showModal, setShowModal] = useState(false);
 
   // Load profile data from localStorage
   useEffect(() => {
@@ -79,6 +81,27 @@ const ChildProfileScreen = () => {
     } catch (error) {
       console.error("Error logging out", error);
     }
+  };
+
+  const handleDelete = async (password) => {
+    const response = await fetch(
+      "https://kithia.com/website_b5d91c8e/api/user/delete",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
+        },
+        body: JSON.stringify({ password }),
+      }
+    );
+
+    if (!response.ok) {
+      const data = await response.json();
+      throw new Error(data.message || "Failed to delete account");
+    }
+
+    localStorage.removeItem("auth_token");
   };
 
   return (
@@ -190,6 +213,23 @@ const ChildProfileScreen = () => {
           >
             Save and Continue
           </Button>
+          <div className="text-center mt-3">
+            <p
+              style={{
+                color: "red",
+                cursor: "pointer",
+                textDecoration: "underline",
+              }}
+              onClick={() => setShowModal(true)}
+            >
+              Delete Account
+            </p>
+          </div>
+          <DeleteAccountModal
+            show={showModal}
+            handleClose={() => setShowModal(false)}
+            handleDelete={handleDelete}
+          />
         </Card.Body>
       </motion.div>
     </motion.div>
